@@ -39,7 +39,7 @@ class TerrainSceneCfg(InteractiveSceneCfg):
             static_friction=1.0,
             dynamic_friction=1.0,
         ),
-        usd_path="omniverse://localhost/Library/NVIDIA/new_carla_export/carla.usd",
+        usd_path="omniverse://localhost/Library/NVIDIA/new_carla_export_1/carla.usd",
         groundplane=True,
         cw_config_file=os.path.join(DATA_DIR, "town01", "cw_multiply_cfg.yml"),
         sem_mesh_to_class_map=os.path.join(DATA_DIR, "town01", "keyword_mapping.yml"),
@@ -114,5 +114,5 @@ class ViPlannerCarlaCfg(ViPlannerBaseCfg):
         self.viewer.eye = (133, 127.5, 8.5)
         self.viewer.lookat = (125.5, 120, 1.0)
         # change ANYmal position
-        self.scene.robot.init_state.pos = (125.5, 118.5, 1.2)
-        self.scene.robot.init_state.rot = (0.0, 0.0, 0.0, 1.0)
+        self.scene.robot.init_state.pos = (125.5, 118.5, 0.8)
+        self.scene.robot.init_state.rot = (0.707, 0.0, 0.0, -0.707)
