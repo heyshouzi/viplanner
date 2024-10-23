@@ -1,5 +1,6 @@
 # model files
 ros/planner/models/*
+model/*
 #internal files
 */intern/*
 # beat the planner files
