@@ -3,7 +3,11 @@ version = "0.0.1"
 title = "Matterport extension"
 description="Extension to include Matterport 3D Datasets into Isaac"
 authors =["Pascal Roth"]
+<<<<<<< HEAD
 repository = "https://github.com/leggedrobotics/viplanner"
+=======
+repository = "https://github.com/leggedrobotics/omni_isaac_orbit"
+>>>>>>> dev/upgrade
 category = "robotics"
 keywords = ["kit", "robotics"]
 readme  = "docs/README.md"

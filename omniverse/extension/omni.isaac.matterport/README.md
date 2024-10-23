@@ -21,5 +21,10 @@ To enable your extension, follow these steps:
 
 To use it as part of an IsaacLab workflow, please refer to the [ViPlanner Demo](https://github.com/leggedrobotics/viplanner/tree/main/omniverse).
 
+<<<<<<< HEAD
 **IMPORTANT**: The current GUI demo can only be used to import meshes. There are issues for displaying the images of the added cameras.
 We are working on a fix.
+=======
+**IMPORTANT**: The current GUI demo can only be used to import meshes. There are issues for displaying the images of the added cameras. 
+We are working on a fix. 
+>>>>>>> dev/upgrade
