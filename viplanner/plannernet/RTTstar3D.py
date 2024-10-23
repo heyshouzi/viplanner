@@ -1,5 +1,11 @@
+from cost_maps import SemCostMap
+from typing import Tuple, List
+import numpy as np
 
-
+class Node:
+    def __init__(self, position: Tuple[float, float, float], parent=None):
+        self.position = position
+        self.parent = parent
 
 class RTTStarPlanner:
     def __init__(self, cost_map: SemCostMap):
@@ -7,25 +13,21 @@ class RTTStarPlanner:
         self.path = []
 
     def plan_trajectory(self, start: Tuple[float, float, float], goal: Tuple[float, float, float]):
-        self.start = start
-        self.goal = goal
+        self.start = Node(start)
+        self.goal = Node(goal)
         
         # Step 1: Create the cost map
         grid_loss, points, height_map = self.cost_map.create_costmap()
         
         # Step 2: Implement RTT* planning algorithm
-        self.path = self.rtt_star(start, goal, grid_loss)
+        self.path = self.rtt_star(self.start, self.goal, grid_loss)
 
-    def rtt_star(self, start, goal, grid_loss):
-        # 这里实现RTT*算法
-        open_set = []  # 优先队列
+    def rtt_star(self, start: Node, goal: Node, grid_loss: np.ndarray) -> List[Node]:
+        open_set = [start]  # 优先队列
         closed_set = set()
 
-        # 将起始点加入开放集合
-        open_set.append((start, 0))  # (坐标, 当前成本)
-
         while open_set:
-            current = self.get_lowest_cost_node(open_set)
+            current = self.get_lowest_cost_node(open_set, goal, grid_loss)
             if self.reached_goal(current, goal):
                 return self.reconstruct_path(current)
 
@@ -37,35 +39,38 @@ class RTTStarPlanner:
                     continue
 
                 # 计算成本
-                cost = self.calculate_cost(neighbor, grid_loss)
+                cost = self.calculate_cost(neighbor.position, grid_loss)
 
                 # 如果是新的节点，或者新的路径更优
                 if neighbor not in open_set or cost < self.get_cost(neighbor):
-                    open_set.append((neighbor, cost))
+                    open_set.append(neighbor)
 
         return []
 
-    def get_neighbors(self, node):
-        # 返回邻近节点
-        pass
+    def get_neighbors(self, node: Node) -> List[Node]:
+        neighbors = []
+        x, y, z = node.position
+        directions = [(-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1)]
+        
+        for dx, dy, dz in directions:
+            neighbor_position = (x + dx, y + dy, z + dz)
+            neighbors.append(Node(neighbor_position, parent=node))
 
-    def calculate_cost(self, node, grid_loss):
-        # 计算从节点到目标的成本
-        x, y = node[:2]
-        return grid_loss[int(x)][int(y)]  # 假设grid_loss是个二维数组
+        return neighbors
 
-    def get_lowest_cost_node(self, open_set):
-        # 获取开放集合中成本最低的节点
-        return min(open_set, key=lambda x: x[1])
+    def calculate_cost(self, position: Tuple[float, float, float], grid_loss: np.ndarray) -> float:
+        x, y = int(position[0]), int(position[1])
+        return grid_loss[x][y]  # 假设grid_loss是个二维数组
 
-    def reached_goal(self, current, goal):
-        # 判断是否到达目标
-        return np.linalg.norm(np.array(current) - np.array(goal)) < 1.0
+    def get_lowest_cost_node(self, open_set: List[Node], goal: Node, grid_loss: np.ndarray) -> Node:
+        return min(open_set, key=lambda node: self.calculate_cost(node.position, grid_loss) + np.linalg.norm(np.array(node.position) - np.array(goal.position)))
 
-    def reconstruct_path(self, current):
-        # 重建路径
+    def reached_goal(self, current: Node, goal: Node) -> bool:
+        return np.linalg.norm(np.array(current.position) - np.array(goal.position)) < 1.0
+
+    def reconstruct_path(self, current: Node) -> List[Tuple[float, float, float]]:
         path = []
         while current:
-            path.append(current)
-            current = current.parent  # 假设有parent属性指向上一个节点
+            path.append(current.position)
+            current = current.parent  # 通过parent属性指向上一个节点
         return path[::-1]  # 返回正向路径
