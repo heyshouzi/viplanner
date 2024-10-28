@@ -32,6 +32,7 @@ from viplanner.plannernet import (
 from viplanner.traj_cost_opt import TrajCost, TrajViz
 from viplanner.utils.torchutil import EarlyStopScheduler, count_parameters
 
+from plannernet.RTTstar3D import RTTStarPlanner
 from .dataset import PlannerData, PlannerDataGenerator
 
 torch.set_default_dtype(torch.float32)
@@ -463,7 +464,8 @@ class Trainer:
             odom = inputs[2].cuda(self._cfg.gpu_id)
             goal = inputs[3].cuda(self._cfg.gpu_id)
             self.optimizer.zero_grad()
-
+            rtt_star_planner = RTTStarPlanner()
+            gt_path = rtt_star_planner.plan_trajectory(odom, goal)
             if self._cfg.sem or self._cfg.rgb:
                 depth_image = inputs[0].cuda(self._cfg.gpu_id)
                 sem_rgb_image = inputs[1].cuda(self._cfg.gpu_id)
